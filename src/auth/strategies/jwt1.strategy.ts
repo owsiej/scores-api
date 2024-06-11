@@ -1,10 +1,6 @@
 import { ExtractJwt, Strategy } from 'passport-jwt';
 import { PassportStrategy } from '@nestjs/passport';
-import {
-  Injectable,
-  NotFoundException,
-  UnauthorizedException,
-} from '@nestjs/common';
+import { Injectable, UnauthorizedException } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { AuthenticationService } from '../services/authentication.service';
 import { UserDocument } from '../../users/schema/user.schema';
@@ -12,7 +8,10 @@ import { Request } from 'express';
 import { JwtTokenPayload } from '../../common/models/jwt-token.payload';
 
 @Injectable()
-export class JwtStrategy extends PassportStrategy(Strategy) {
+export class JwtAccessTokenStrategyUsers extends PassportStrategy(
+  Strategy,
+  'jwt-access-users',
+) {
   constructor(
     configService: ConfigService,
     private authService: AuthenticationService,
@@ -31,22 +30,17 @@ export class JwtStrategy extends PassportStrategy(Strategy) {
   ): Promise<UserDocument> {
     const user = await this.authService.verifyUserById(payload.id);
     if (!user) {
-      throw new NotFoundException(`User with given id does not exists`);
+      throw new UnauthorizedException(`Invalid token.`);
     }
-    let inputUsername: string;
-    const requestMethod = req.method;
 
-    switch (requestMethod) {
-      case 'POST':
-        inputUsername = req.body.username;
-        break;
-      case 'GET':
-        inputUsername = req.params.username;
-        break;
+    if (!user.refreshToken) {
+      throw new UnauthorizedException(`Access denied. Token revoked.`);
     }
+
+    const inputUsername = req.params.username;
+
     if (user.username !== inputUsername) {
-      console.log('halo');
-      throw new UnauthorizedException();
+      throw new UnauthorizedException('Invalid username.');
     }
     return user;
   }

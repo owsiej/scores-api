@@ -9,8 +9,8 @@ export class MongoExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     switch (exception.code) {
       case 11000:
-        response.status(400).json({
-          statusCode: 400,
+        response.status(409).json({
+          statusCode: 409,
           message: 'User with given name already exists.',
         });
         break;

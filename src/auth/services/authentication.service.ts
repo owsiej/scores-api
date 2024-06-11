@@ -2,7 +2,7 @@ import { Injectable } from '@nestjs/common';
 import { ConfigService } from '@nestjs/config';
 import { JwtService } from '@nestjs/jwt';
 import { hash, compare } from 'bcrypt';
-import { JwtToken } from 'src/auth/dto/create-token.dto';
+import { JwtTokensDto } from 'src/auth/dto/create-token.dto';
 import { UserDocument } from 'src/users/schema/user.schema';
 import { UserService } from '../../users/services/user.service';
 
@@ -40,7 +40,7 @@ export class AuthenticationService {
     return user;
   }
 
-  async generateJwtToken(user: UserDocument): Promise<JwtToken> {
+  async generateJwtTokens(user: UserDocument): Promise<JwtTokensDto> {
     const payload = {
       id: user._id,
     };
@@ -49,17 +49,33 @@ export class AuthenticationService {
     const userAge =
       Math.abs(now.getTime() - userBirthday.getTime()) / 31_556_952_000;
 
-    const token = await this.jwtService.signAsync(payload, {
-      expiresIn: ((userAge % 10) * 10).toFixed(0) + 'm',
-    });
+    const [accessToken, refreshToken] = await Promise.all([
+      this.jwtService.signAsync(payload, {
+        secret: this.configService.get('JWT_SECRET_KEY'),
+        expiresIn: ((userAge % 10) * 10).toFixed(0) + 'm',
+      }),
+      this.jwtService.signAsync(payload, {
+        secret: this.configService.get('JWT_REFRESH_SECRET_KEY'),
+        expiresIn: '7d',
+      }),
+    ]);
+
     return {
-      accessToken: token,
+      access_token: accessToken,
+      refresh_token: refreshToken,
     };
   }
 
-  async verifyToken(token: string) {
+  async verifyAccessToken(token: string) {
     const decodedToken = await this.jwtService.verifyAsync(token, {
       secret: this.configService.get('JWT_SECRET_KEY'),
+    });
+    return decodedToken;
+  }
+
+  async verifyRefreshToken(token: string) {
+    const decodedToken = await this.jwtService.verifyAsync(token, {
+      secret: this.configService.get('JWT_REFRESH_SECRET_KEY'),
     });
     return decodedToken;
   }

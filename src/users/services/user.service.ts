@@ -31,6 +31,18 @@ export class UserService {
       _id: new ObjectId(userId),
     });
   }
+
+  async updateUserRefreshToken(
+    userId: ObjectId,
+    token: string | null,
+  ): Promise<void> {
+    await this.userModel.updateOne(
+      { _id: userId },
+      {
+        refreshToken: token,
+      },
+    );
+  }
 }
 /*
 frontend - wysyla zapytanie do backend czy dany uzytkownik istnieje (get po name), jezeli istnieje to po sumbit idzie do api/login a jak nie to /register
@@ -43,9 +55,9 @@ frontend - wysyla zapytanie do backend czy dany uzytkownik istnieje (get po name
 
 TODO
 
-zrobic auth controller
-refresh token
-dodac exception filter albo rozszerzyc handleRequest w JwtGuard zeby rozszerzyc bledy jwt tokena
-swagger
+
+wildcard route z pomoca exception filters
+rate limiting
+blokada jak ktos poda kilka razy nieprawidlowe haslo
 odpalic cors
 */

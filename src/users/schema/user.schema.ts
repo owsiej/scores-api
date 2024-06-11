@@ -28,6 +28,9 @@ export class User {
 
   @Prop({ type: Date, required: true })
   dateOfBirth: Date;
+
+  @Prop({ required: false })
+  refreshToken: string;
 }
 
 export const UserSchema = SchemaFactory.createForClass(User);

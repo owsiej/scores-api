@@ -1,6 +1,6 @@
 import {
+  BadRequestException,
   Injectable,
-  NotFoundException,
   UnauthorizedException,
 } from '@nestjs/common';
 import { PassportStrategy } from '@nestjs/passport';
@@ -18,7 +18,7 @@ export class LocalStrategy extends PassportStrategy(Strategy) {
     const user = await this.authService.verifyUserByUsername(username);
 
     if (!user) {
-      throw new NotFoundException(`User ${username} does not exists`);
+      throw new BadRequestException(`User ${username} does not exists`);
     }
     const isPasswordValid = await this.authService.verifyPassword(
       password,

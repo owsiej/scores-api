@@ -20,6 +20,7 @@ export class ScoresService {
     const createdScore = new this.scoreModel({
       score: score.score,
       user: user,
+      username: user.username,
     });
     return await createdScore.save();
   }
@@ -28,7 +29,10 @@ export class ScoresService {
     const userScores = await this.userService.findUserById(userId);
 
     return (
-      await userScores.populate({ path: 'scores', select: 'score user' })
+      await userScores.populate({
+        path: 'scores',
+        select: 'score username user',
+      })
     ).get('scores');
   }
 

@@ -1,3 +1,4 @@
+import { ApiProperty } from '@nestjs/swagger';
 import {
   IsDateString,
   IsNotEmpty,
@@ -13,7 +14,7 @@ export class CreateUserDto {
   @IsNotEmpty()
   @IsString()
   @Length(3, 15)
-  @Matches(/^[A-Z-a-z0-9]+$/, {
+  @Matches('^[A-Za-z0-9]+$', '', {
     message: 'Special symbols in $property are not allowed.',
   })
   username: string;
@@ -23,7 +24,8 @@ export class CreateUserDto {
   @MinLength(8)
   @MaxLength(35)
   @Matches(
-    /(?=.*[a-ząężźłćńśó])(?=.*[A-ZĄĘŻŹŁĆŃŚÓ])(?=.*\d)(?=.*[@$!%*#?&_])[A-Za-ząężźłćńśóĄĘŻŹŁĆŃŚÓ\d@$!#%*?&_]*/,
+    '(?=.*[a-ząężźłćńśó])(?=.*[A-ZĄĘŻŹŁĆŃŚÓ])(?=.*\\d)(?=.*[@$!%*#?&_])[A-Za-ząężźłćńśóĄĘŻŹŁĆŃŚÓ\\d@$!#%*?&_]*',
+    '',
     {
       message:
         '$property must contain at least one small/big letter, digit and special symbol.',
@@ -31,6 +33,7 @@ export class CreateUserDto {
   )
   password: string;
 
+  @ApiProperty({ type: Date })
   @IsNotEmpty()
   @IsDateString()
   dateOfBirth: Date;
