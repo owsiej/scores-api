@@ -1,4 +1,9 @@
-import { ArgumentsHost, Catch, ExceptionFilter } from '@nestjs/common';
+import {
+  ArgumentsHost,
+  Catch,
+  ExceptionFilter,
+  InternalServerErrorException,
+} from '@nestjs/common';
 import { Response } from 'express';
 import { MongoServerError } from 'mongoose/node_modules/mongodb';
 
@@ -14,6 +19,8 @@ export class MongoExceptionFilter implements ExceptionFilter {
           message: 'User with given name already exists.',
         });
         break;
+      default:
+        throw new InternalServerErrorException(exception.errorResponse);
     }
   }
 }

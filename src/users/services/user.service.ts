@@ -44,20 +44,3 @@ export class UserService {
     );
   }
 }
-/*
-frontend - wysyla zapytanie do backend czy dany uzytkownik istnieje (get po name), jezeli istnieje to po sumbit idzie do api/login a jak nie to /register
-         - front musi porywnywac podana i shashowana date urodzin,
-         - dodaje ostatnia date urodzin i username do local storage i od razu uzupelnia tymi danymi formularz (serwis)
-         - ma dostep rowniez do tokenu w localStorage i jezeli taki token istnieje to wysyla do api przez endpoint login albo przez nowy typu verifySession
-           te wszystkie dane i jezeli token jest aktywny i all gra to przenosi od razu do gry a jezeli nie to do formularza logowania
-         - blokada post score z points ponizej 10
-         - interceptor z dodawaniem auth headera do requestow
-
-TODO
-
-
-wildcard route z pomoca exception filters
-rate limiting
-blokada jak ktos poda kilka razy nieprawidlowe haslo
-odpalic cors
-*/
