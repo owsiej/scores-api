@@ -9,7 +9,6 @@ import { JwtModule } from '@nestjs/jwt';
 import { JwtAccessTokenStrategyUsers } from 'src/auth/strategies/jwt1.strategy';
 import { ScoresModule } from '../scores/scores.module';
 import { AuthenticationController } from './controllers/authentication.controller';
-import { JwtAccessTokenStrategyScore } from './strategies/jwt2.strategy';
 import { JwtAccessTokenStrategyLogout } from './strategies/jwt3.strategy';
 import { JwtRefreshTokenStrategy } from './strategies/jwt4strategy';
 
@@ -26,7 +25,6 @@ import { JwtRefreshTokenStrategy } from './strategies/jwt4strategy';
     AuthenticationService,
     LocalStrategy,
     JwtAccessTokenStrategyUsers,
-    JwtAccessTokenStrategyScore,
     JwtAccessTokenStrategyLogout,
     JwtRefreshTokenStrategy,
   ],

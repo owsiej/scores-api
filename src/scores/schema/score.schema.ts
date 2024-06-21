@@ -11,10 +11,8 @@ export type ScoreDocument = mongoose.HydratedDocument<Score>;
   timestamps: true,
 })
 export class Score {
-  @ApiProperty({
-    type: String,
-  })
   @Transform((params) => params.obj._id.toString())
+  @Exclude()
   _id: mongoose.ObjectId;
 
   @Exclude()
@@ -39,10 +37,10 @@ export class Score {
   @Prop()
   username: string;
 
-  @ApiProperty()
+  @Exclude()
   createdAt: Date;
 
-  @ApiProperty()
+  @Exclude()
   updatedAt: Date;
 }
 

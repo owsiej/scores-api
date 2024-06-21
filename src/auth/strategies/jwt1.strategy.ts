@@ -37,7 +37,7 @@ export class JwtAccessTokenStrategyUsers extends PassportStrategy(
       throw new UnauthorizedException(`Access denied. Token revoked.`);
     }
 
-    const inputUsername = req.params.username;
+    const inputUsername = req.params.username ?? req.body.username;
 
     if (user.username !== inputUsername) {
       throw new UnauthorizedException('Invalid username.');

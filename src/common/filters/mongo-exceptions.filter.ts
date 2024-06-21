@@ -6,6 +6,7 @@ import {
 } from '@nestjs/common';
 import { Response } from 'express';
 import { MongoServerError } from 'mongoose/node_modules/mongodb';
+import { CreateErrorResponseDto } from '../dto/create-response-error.dto';
 
 @Catch(MongoServerError)
 export class MongoExceptionFilter implements ExceptionFilter {
@@ -14,13 +15,20 @@ export class MongoExceptionFilter implements ExceptionFilter {
     const response = ctx.getResponse<Response>();
     switch (exception.code) {
       case 11000:
-        response.status(409).json({
+        const responseBody: CreateErrorResponseDto = {
           statusCode: 409,
+          error: 'Conflict',
           message: 'User with given name already exists.',
-        });
+        };
+        response.status(409).json(responseBody);
         break;
       default:
-        throw new InternalServerErrorException(exception.errorResponse);
+        const defaultBody: CreateErrorResponseDto = {
+          statusCode: 500,
+          error: 'Server error.',
+          message: exception.errorResponse.message,
+        };
+        throw new InternalServerErrorException(defaultBody);
     }
   }
 }

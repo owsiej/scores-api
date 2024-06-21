@@ -29,6 +29,10 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import { AuthUserDto } from '../dto/auth-user.dto';
+import {
+  CreateErrorResponseDto,
+  JwtCreateErrorResponseDto,
+} from 'src/common/dto/create-response-error.dto';
 
 @ApiTags('auth')
 @Controller('auth')
@@ -41,22 +45,11 @@ export class AuthenticationController {
 
   @ApiConflictResponse({
     description: 'User with given name already exists.',
-    schema: {
-      example: {
-        message: 'User with given name already exists.',
-        statusCode: 409,
-      },
-    },
+    type: CreateErrorResponseDto,
   })
   @ApiBadRequestResponse({
     description: 'Invalid body properties',
-    schema: {
-      example: {
-        message: 'User ${user} does not exists',
-        error: 'Not Found',
-        statusCode: 404,
-      },
-    },
+    type: CreateErrorResponseDto,
   })
   @Post('register')
   @UseFilters(MongoExceptionFilter)
@@ -75,23 +68,11 @@ export class AuthenticationController {
 
   @ApiBadRequestResponse({
     description: 'Invalid username',
-    schema: {
-      example: {
-        message: 'User ${username} does not exists',
-        error: 'Not Found',
-        statusCode: 400,
-      },
-    },
+    type: CreateErrorResponseDto,
   })
   @ApiUnauthorizedResponse({
     description: 'Invalid password or body properties.',
-    schema: {
-      example: {
-        message: 'Wrong password',
-        error: 'Unauthorized',
-        statusCode: 401,
-      },
-    },
+    type: CreateErrorResponseDto,
   })
   @ApiBody({ type: AuthUserDto })
   @UseGuards(LocalAuthGuard)
@@ -108,12 +89,7 @@ export class AuthenticationController {
 
   @ApiUnauthorizedResponse({
     description: 'Invalid token.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'invalid token',
-      },
-    },
+    type: JwtCreateErrorResponseDto,
   })
   @ApiNoContentResponse({
     description: 'Successful logout.',
@@ -129,12 +105,7 @@ export class AuthenticationController {
 
   @ApiUnauthorizedResponse({
     description: 'Invalid token or token revoked.',
-    schema: {
-      example: {
-        statusCode: 401,
-        message: 'invalid token',
-      },
-    },
+    type: JwtCreateErrorResponseDto,
   })
   @ApiBearerAuth()
   @UseGuards(JwtRefreshAuthGuard)

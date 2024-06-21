@@ -13,10 +13,9 @@ import { ScoreGuard } from 'src/scores/guards/scores.guard';
 import { Score } from 'src/scores/schema/score.schema';
 import { UserDocument } from 'src/users/schema/user.schema';
 import { ScoresService } from 'src/scores/services/scores.service';
-
-import { JwtAuthGuardScores } from 'src/auth/guards/jwt2-auth.guard';
 import { JwtAuthGuardUsers } from 'src/auth/guards/jwt-auth.guard';
 import {
+  ApiBadRequestResponse,
   ApiBearerAuth,
   ApiExtraModels,
   ApiForbiddenResponse,
@@ -25,6 +24,10 @@ import {
   ApiUnauthorizedResponse,
 } from '@nestjs/swagger';
 import MongooseClassSerializerInterceptor from 'src/common/serializes/mongo-serializer';
+import {
+  CreateErrorResponseDto,
+  JwtCreateErrorResponseDto,
+} from 'src/common/dto/create-response-error.dto';
 
 @ApiTags('scores')
 @ApiExtraModels(Score)
@@ -32,12 +35,19 @@ import MongooseClassSerializerInterceptor from 'src/common/serializes/mongo-seri
 export class ScoresController {
   constructor(private scoreService: ScoresService) {}
 
+  @ApiBadRequestResponse({
+    description: 'Invalid body properties',
+    type: CreateErrorResponseDto,
+  })
   @ApiForbiddenResponse({
     description: 'Appears when provided score is lower then 10.',
   })
+  @ApiUnauthorizedResponse({
+    description: 'Invalid body/token.',
+    type: JwtCreateErrorResponseDto,
+  })
   @ApiBearerAuth()
-  @ApiUnauthorizedResponse({ description: 'Invalid body/token.' })
-  @UseGuards(ScoreGuard, JwtAuthGuardScores)
+  @UseGuards(ScoreGuard, JwtAuthGuardUsers)
   @UseInterceptors(MongooseClassSerializerInterceptor(Score))
   @Post()
   async addScore(
@@ -51,7 +61,10 @@ export class ScoresController {
     return score;
   }
 
-  @ApiUnauthorizedResponse({ description: 'Invalid token/username.' })
+  @ApiUnauthorizedResponse({
+    description: 'Invalid token/username.',
+    type: JwtCreateErrorResponseDto,
+  })
   @ApiBearerAuth()
   @ApiParam({ name: 'username', required: true })
   @UseInterceptors(MongooseClassSerializerInterceptor(Score))
