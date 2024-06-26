@@ -6,7 +6,8 @@
 <h3 align="center">Score API</h3>
 
   <p align="center">
-    API allowing register/login users and get/post scores using JWT authentication.
+    API allowing register/login users and get/post scores using JWT authentication.<br>
+<b>🚀DEPLOYED ON</b>: https://europe-west1-snake-game-project-e8b0d.cloudfunctions.net/api/docs
 
 </div>
 
